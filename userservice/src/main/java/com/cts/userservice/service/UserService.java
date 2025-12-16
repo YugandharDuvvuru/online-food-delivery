@@ -1,0 +1,18 @@
+package com.cts.userservice.service;
+
+import com.cts.userservice.dto.UserAddressResponseDto;
+import com.cts.userservice.entity.UserEntity;
+import com.cts.userservice.dto.UserAddressDto;
+import com.cts.userservice.dto.UserDetailsDto;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+
+public interface UserService {
+    public ResponseEntity<String> saveUserDetails(UserEntity userEntity);
+    public ResponseEntity<UserDetailsDto> getUserDetailsById(Long id);
+    public ResponseEntity<String> addUserAddress(Long userId, UserAddressDto userAddress);
+    public ResponseEntity<List<UserAddressResponseDto>> getUserAddress(Long userId);
+    public ResponseEntity<UserDetailsDto> updateUserById(Long userId,UserDetailsDto userDetails);
+    public ResponseEntity<String> deleteUserById(Long userId);
+}
