@@ -13,6 +13,7 @@ public class MenuAndRestaurantDto {
     private String itemName;
     private Integer price;
     private boolean availaible;
+    private Integer estimatedItemsDelivered;
     private String category;
     private String name;
     private String city;

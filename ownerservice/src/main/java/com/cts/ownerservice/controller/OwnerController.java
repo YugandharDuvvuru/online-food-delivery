@@ -25,7 +25,6 @@ public class OwnerController {
     }
     @DeleteMapping("/delete/owner-by/{ownerId}")
     public ResponseEntity<String> deleteOwnerById(@PathVariable Long ownerId){
-        System.out.println("Ok controller");
         return ownerService.deleteOwnerById(ownerId);
     }
 

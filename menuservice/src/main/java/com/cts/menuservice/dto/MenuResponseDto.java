@@ -13,5 +13,6 @@ public class MenuResponseDto {
     private String itemName;
     private Integer price;
     private boolean availaible;
+    private Integer estimatedItemsDelivered;
     private String category;
 }

@@ -1,5 +1,4 @@
-package com.cts.menuservice.dto;
-
+package com.cts.cartservice.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +6,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MenuDto {
+public class MenuResponseDto {
+    private Long itemId;
+    private Long restaurantId;
     private String itemName;
     private Integer price;
     private boolean availaible;
