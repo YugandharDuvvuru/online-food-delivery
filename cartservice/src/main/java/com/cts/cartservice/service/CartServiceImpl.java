@@ -28,12 +28,12 @@ public class CartServiceImpl implements CartService{
         if(!menuDeatils.isAvailaible()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Item is unavailable today.");
         }
-        if(cartItemDto.getQuantity()<1){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantity should be atleast one");
-        }
-        if(cartItemDto.getQuantity()>menuDeatils.getEstimatedItemsDelivered()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Items are out of stock today.Available Items are : "+menuDeatils.getEstimatedItemsDelivered());
-        }
+//        if(cartItemDto.getQuantity()<1){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantity should be atleast one");
+//        }
+//        if(cartItemDto.getQuantity()>menuDeatils.getEstimatedItemsDelivered()){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Items are out of stock today.Available Items are : "+menuDeatils.getEstimatedItemsDelivered());
+//        }
         Optional<CartItem> existingItem = cartRepo.findByUserIdAndItemId(cartItemDto.getUserId(), cartItemDto.getItemId());
 
         if (existingItem.isPresent()) {

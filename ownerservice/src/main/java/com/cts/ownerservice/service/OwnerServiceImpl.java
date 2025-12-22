@@ -218,10 +218,10 @@ public class OwnerServiceImpl implements OwnerService{
 		List<RestaurantEntity> listOfRest = restaurantRepo.findAll();
 		List<RestaurantResponseDto> restaurantResponse = new ArrayList<>();
 		for(RestaurantEntity e: listOfRest) {
-			if(e.isOpen()) {
+			
 			RestaurantResponseDto dto = new RestaurantResponseDto(e);
 			restaurantResponse.add(dto);
-			}
+			
 		}
 		return ResponseEntity.ok(restaurantResponse);
 	}
