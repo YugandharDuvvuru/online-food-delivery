@@ -25,6 +25,7 @@ public class MenuEntity {
     private String itemName;
     private String itemNameKey;
     private Integer price;
+    private Integer estimatedItemsDelivered;
     private boolean availaible;
     private String category;
 }

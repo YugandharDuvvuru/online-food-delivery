@@ -41,6 +41,7 @@ public class MenuServiceImpl implements  MenuService{
         entity.setItemName(menuDto.getItemName().trim());
         entity.setItemNameKey(normalizedKey);
         entity.setPrice(menuDto.getPrice());
+        entity.setEstimatedItemsDelivered(menuDto.getEstimatedItemsDelivered());
         entity.setAvailaible(menuDto.isAvailaible());
         entity.setCategory(menuDto.getCategory());
 
@@ -71,6 +72,7 @@ public class MenuServiceImpl implements  MenuService{
             dto.setItemName(item.getItemName());
             dto.setPrice(item.getPrice());
             dto.setAvailaible(item.isAvailaible());
+            dto.setEstimatedItemsDelivered(item.getEstimatedItemsDelivered());
             dto.setCategory(item.getCategory());
             menuDtos.add(dto);
         }
@@ -92,6 +94,7 @@ public class MenuServiceImpl implements  MenuService{
         dto.setPrice(itemDetails.getPrice());
         dto.setAvailaible(itemDetails.isAvailaible());
         dto.setRestaurantId(itemDetails.getRestaurantId());
+        dto.setEstimatedItemsDelivered(itemDetails.getEstimatedItemsDelivered());
         dto.setCategory(itemDetails.getCategory());
         return ResponseEntity.ok(dto);
     }
@@ -144,7 +147,7 @@ public class MenuServiceImpl implements  MenuService{
         // 4) Update other fields (do not touch item_name_key here)
         item.setPrice(menuDto.getPrice());
         item.setCategory(menuDto.getCategory());
-        item.setAvailaible(menuDto.isAvailaible());
+        //item.setEstimatedItemsDelivered(menuDto.getEstimatedItemsDelivered());
 
         // 5) Save
         MenuEntity saved = menuRepo.save(item);
@@ -157,6 +160,7 @@ public class MenuServiceImpl implements  MenuService{
         response.setPrice(saved.getPrice());
         response.setAvailaible(saved.isAvailaible());
         response.setCategory(saved.getCategory());
+        response.setEstimatedItemsDelivered(saved.getEstimatedItemsDelivered());
 
         return ResponseEntity.ok(response);
     }
@@ -176,6 +180,7 @@ public class MenuServiceImpl implements  MenuService{
             dto.setItemName(item.getItemName());
             dto.setPrice(item.getPrice());
             dto.setAvailaible(item.isAvailaible());
+            dto.setEstimatedItemsDelivered(item.getEstimatedItemsDelivered());
             dto.setCategory(item.getCategory());
             RestaurantResponseDto restaurantDto=restaurantClient.getRestaurantById(item.getRestaurantId()).getBody();
             dto.setName(restaurantDto.getName());
@@ -208,6 +213,7 @@ public class MenuServiceImpl implements  MenuService{
             dto.setPrice(item.getPrice());
             dto.setAvailaible(item.isAvailaible());
             dto.setCategory(item.getCategory());
+            dto.setEstimatedItemsDelivered(item.getEstimatedItemsDelivered());
             RestaurantResponseDto restaurantDto = restaurantClient.getRestaurantById(item.getRestaurantId()).getBody();
             dto.setName(restaurantDto.getName());
             dto.setArea(restaurantDto.getArea());
@@ -226,5 +232,18 @@ public class MenuServiceImpl implements  MenuService{
         }
         menuRepo.deleteById(itemId);
         return ResponseEntity.ok("Menu Item with id "+itemId+" deleted successfully");
+    }
+
+    @Override
+    public ResponseEntity<String> updateEstimatedItemsDelivered(Long itemId,Integer itemsDelivered) {
+        Optional<MenuEntity> itemToUpdate=menuRepo.findByItemId(itemId) ;
+        if(itemToUpdate.isEmpty()){
+            throw new ItemNotFoundException("Item not found with itemId "+ itemId);
+        }
+        MenuEntity entity=itemToUpdate.get();
+        entity.setEstimatedItemsDelivered(itemsDelivered);
+        menuRepo.save(entity);
+        return ResponseEntity.ok("Items to be delivered successfully updated");
+
     }
 }
