@@ -20,4 +20,5 @@ public interface OwnerService {
     public ResponseEntity<String> deleteRestaurantById(Long restaurantId);
     public ResponseEntity<OwnerDetailsDto> updateOwnerById(Long ownerId,OwnerDetailsDto ownerDetails);
     public ResponseEntity<String> deleteOwnerById(Long ownerId);
+    public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurantsForUser();
 }

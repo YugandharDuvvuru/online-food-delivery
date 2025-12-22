@@ -42,4 +42,11 @@ public class RestaurantController {
     public ResponseEntity<String> detelteRestaurantById(@PathVariable Long restaurantId){
         return ownerService.deleteRestaurantById(restaurantId);
     }
+    
+    @GetMapping("/get-all-available")
+    public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurantByUser(){
+    	return ownerService.getAllRestaurantsForUser();
+    }
+    
+    
 }
