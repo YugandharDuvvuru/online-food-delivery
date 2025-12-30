@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("restaurant")
+@CrossOrigin
 public class RestaurantController {
     @Autowired
     private OwnerService ownerService;
@@ -43,4 +44,11 @@ public class RestaurantController {
     public ResponseEntity<MessageResponse> detelteRestaurantById(@PathVariable Long restaurantId){
         return ownerService.deleteRestaurantById(restaurantId);
     }
+    
+    @GetMapping("/get-all-available")
+    public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurantByUser(){
+    	return ownerService.getAllRestaurantsForUser();
+    }
+    
+    
 }

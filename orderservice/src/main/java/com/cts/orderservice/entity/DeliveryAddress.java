@@ -1,5 +1,6 @@
 package com.cts.orderservice.entity;
 
+<<<<<<< HEAD
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -84,3 +85,8 @@ public class DeliveryAddress {
     }
 }
 
+=======
+public class DeliveryAddress {
+
+}
+>>>>>>> 139106114d557b4e10880cd7fa32ac7fa6de98fb

@@ -20,5 +20,10 @@ public interface OwnerService {
     public ResponseEntity<RestaurantResponseDto> updateRestaurantById(Long restaurantId,RestaurantDetailsDto restaurantDetails);
     public ResponseEntity<MessageResponse> deleteRestaurantById(Long restaurantId);
     public ResponseEntity<OwnerDetailsDto> updateOwnerById(Long ownerId,OwnerDetailsDto ownerDetails);
+<<<<<<< HEAD
     public ResponseEntity<MessageResponse> deleteOwnerById(Long ownerId);
+=======
+    public ResponseEntity<String> deleteOwnerById(Long ownerId);
+    public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurantsForUser();
+>>>>>>> 139106114d557b4e10880cd7fa32ac7fa6de98fb
 }

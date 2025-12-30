@@ -26,9 +26,20 @@ public class CartServiceImpl implements CartService{
     public ResponseEntity<MessageResponse> addItemToCart(CartItemDto cartItemDto) {
         MenuResponseDto menuDeatils=client.getParticularItemDetails(cartItemDto.getItemId()).getBody();
         if(!menuDeatils.isAvailaible()){
+<<<<<<< HEAD
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Item is unavailable today."));
         }
 
+=======
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Item is unavailable today.");
+        }
+//        if(cartItemDto.getQuantity()<1){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantity should be atleast one");
+//        }
+//        if(cartItemDto.getQuantity()>menuDeatils.getEstimatedItemsDelivered()){
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Items are out of stock today.Available Items are : "+menuDeatils.getEstimatedItemsDelivered());
+//        }
+>>>>>>> 139106114d557b4e10880cd7fa32ac7fa6de98fb
         Optional<CartItem> existingItem = cartRepo.findByUserIdAndItemId(cartItemDto.getUserId(), cartItemDto.getItemId());
 
         if (existingItem.isPresent()) {

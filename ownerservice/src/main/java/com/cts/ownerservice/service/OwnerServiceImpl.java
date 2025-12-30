@@ -215,6 +215,18 @@ public class OwnerServiceImpl implements OwnerService{
             return ResponseEntity.ok(new MessageResponse("Error ocuures while deleting the user"));
         }
     }
+	@Override
+	public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurantsForUser() {
+		List<RestaurantEntity> listOfRest = restaurantRepo.findAll();
+		List<RestaurantResponseDto> restaurantResponse = new ArrayList<>();
+		for(RestaurantEntity e: listOfRest) {
+			
+			RestaurantResponseDto dto = new RestaurantResponseDto(e);
+			restaurantResponse.add(dto);
+			
+		}
+		return ResponseEntity.ok(restaurantResponse);
+	}
 }
 
 
