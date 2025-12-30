@@ -3,8 +3,8 @@ package com.cts.cartservice.service;
 import com.cts.cartservice.client.MenuClient;
 import com.cts.cartservice.dto.CartItemDto;
 import com.cts.cartservice.dto.MenuResponseDto;
+import com.cts.cartservice.dto.MessageResponse;
 import com.cts.cartservice.entity.CartItem;
-import com.cts.cartservice.exceptions.UserCartNotFoundException;
 import com.cts.cartservice.repository.CartRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +23,12 @@ public class CartServiceImpl implements CartService{
     private CartRepository cartRepo;
     @Transactional
     @Override
-    public ResponseEntity<String> addItemToCart(CartItemDto cartItemDto) {
+    public ResponseEntity<MessageResponse> addItemToCart(CartItemDto cartItemDto) {
         MenuResponseDto menuDeatils=client.getParticularItemDetails(cartItemDto.getItemId()).getBody();
         if(!menuDeatils.isAvailaible()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Item is unavailable today.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Item is unavailable today."));
         }
-        if(cartItemDto.getQuantity()<1){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantity should be atleast one");
-        }
-        if(cartItemDto.getQuantity()>menuDeatils.getEstimatedItemsDelivered()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Items are out of stock today.Available Items are : "+menuDeatils.getEstimatedItemsDelivered());
-        }
+
         Optional<CartItem> existingItem = cartRepo.findByUserIdAndItemId(cartItemDto.getUserId(), cartItemDto.getItemId());
 
         if (existingItem.isPresent()) {
@@ -45,10 +40,10 @@ public class CartServiceImpl implements CartService{
             // Validate against today's available stock
             if (newTotal > menuDeatils.getEstimatedItemsDelivered()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Items are out of stock today. " +
+                        .body(new MessageResponse("Items are out of stock today. " +
                                 "In cart: " + existing.getQuantity() +
                                 ", Requested add: " + cartItemDto.getQuantity() +
-                                ", Available Items are: " + menuDeatils.getEstimatedItemsDelivered());
+                                ", Available Items are: " + menuDeatils.getEstimatedItemsDelivered()));
             }
 
             // Update the existing cart item quantity and timestamp
@@ -56,67 +51,68 @@ public class CartServiceImpl implements CartService{
             existing.setAddedAt(LocalDateTime.now());
             cartRepo.save(existing);
 
-            return ResponseEntity.ok("Item quantity updated in cart successfully");
+            return ResponseEntity.ok(new MessageResponse("Item quantity updated in cart successfully"));
         }
 
         CartItem cartItem=new CartItem(cartItemDto);
         cartItem.setAddedAt(LocalDateTime.now());
         cartRepo.save(cartItem);
-        return ResponseEntity.ok("Item added to cart successfully");
+        return ResponseEntity.ok(new MessageResponse("Item added to cart successfully"));
     }
     @Transactional
     @Override
-    public ResponseEntity<String> clearCartItems(Long userId){
+    public ResponseEntity<MessageResponse> clearCartItems(Long userId){
         int deletedCount=cartRepo.deleteAllByUserId(userId);
         if(deletedCount==0){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No Items are there in cart for userId "+userId);
+                    .body(new MessageResponse("No Items are there in cart for userId "+userId));
         }
-        return ResponseEntity.ok("Cart Items are deleted successfully");
+        return ResponseEntity.ok(new MessageResponse("Cart Items are deleted successfully"));
 
     }
 
     @Override
-    public ResponseEntity<String> updateCartitem(CartItemDto cartItemDto) {
+    public ResponseEntity<MessageResponse> updateCartitem(CartItemDto cartItemDto) {
         Optional<CartItem> existingItem = cartRepo.findByUserIdAndItemId(cartItemDto.getUserId(), cartItemDto.getItemId());
         if(existingItem.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item with "+cartItemDto.getItemId()+"for user with Id "+cartItemDto.getUserId()+"not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Item with "+cartItemDto.getItemId()+"for user with Id "+cartItemDto.getUserId()+"not found."));
         }
         MenuResponseDto menuDeatils=client.getParticularItemDetails(cartItemDto.getItemId()).getBody();
         if(!menuDeatils.isAvailaible()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Item is unavailable today.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Item is unavailable today."));
         }
         if(cartItemDto.getQuantity()<1){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantity should be atleast one");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Quantity should be atleast one"));
         }
         if(cartItemDto.getQuantity()>menuDeatils.getEstimatedItemsDelivered()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Items are out of stock today.Available Items are : "+menuDeatils.getEstimatedItemsDelivered());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Items are out of stock today.Available Items are : "+menuDeatils.getEstimatedItemsDelivered()));
         }
         CartItem itemFound=existingItem.get();
         itemFound.setQuantity(cartItemDto.getQuantity());
         cartRepo.save(itemFound);
-        return ResponseEntity.status(HttpStatus.OK).body("Item Updated Successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Item Updated Successfully"));
     }
     @Transactional
     @Override
-    public ResponseEntity<String> deleteItemByUserIdAndItemId(Long userId, Long itemId) {
+    public ResponseEntity<MessageResponse> deleteItemByUserIdAndItemId(Long userId, Long itemId) {
         Optional<CartItem> itemExsists=cartRepo.findByUserIdAndItemId(userId,itemId);
         if(itemExsists.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item with "+itemId+"for user with Id "+userId+"not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Item with "+itemId+"for user with Id "+userId+"not found."));
         }
         cartRepo.deleteByUserIdAndItemId(userId,itemId);
-        return ResponseEntity.ok("Item deleted from cart successfully");
+        return ResponseEntity.ok(new MessageResponse("Item deleted from cart successfully"));
     }
 
     @Override
     public ResponseEntity<List<MenuResponseDto>> getAllCartItemsForUser(Long userId) {
         List<CartItem> cartItems=cartRepo.findByUserId(userId);
-        if(cartItems.isEmpty()){
-            throw  new UserCartNotFoundException("No cart items found for the user with userId:"+userId);
-        }
+//        if(cartItems.isEmpty()){
+//            throw  new UserCartNotFoundException("No cart Items found for the user with userId:"+userId);
+//        }
         List<MenuResponseDto> dto=new ArrayList<>();
         for(CartItem item:cartItems){
             MenuResponseDto menuDeatils=client.getParticularItemDetails(item.getItemId()).getBody();
+            menuDeatils.setQuantity(item.getQuantity());
             dto.add(menuDeatils);
         }
         return ResponseEntity.ok(dto);

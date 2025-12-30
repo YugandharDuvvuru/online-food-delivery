@@ -1,5 +1,6 @@
 package com.cts.ownerservice.controller;
 
+import com.cts.ownerservice.dto.MessageResponse;
 import com.cts.ownerservice.dto.RestaurantDetailsDto;
 import com.cts.ownerservice.dto.RestaurantResponseDto;
 import com.cts.ownerservice.service.OwnerService;
@@ -15,7 +16,7 @@ public class RestaurantController {
     @Autowired
     private OwnerService ownerService;
     @PostMapping("/add-restaurant-details/{ownerId}")
-    public ResponseEntity<String> addRestaurant(@PathVariable Long ownerId, @RequestBody RestaurantDetailsDto restaurantDetailsDto){
+    public ResponseEntity<MessageResponse> addRestaurant(@PathVariable Long ownerId, @RequestBody RestaurantDetailsDto restaurantDetailsDto){
         return ownerService.addRestaurants(ownerId,restaurantDetailsDto);
     }
     @GetMapping("/get-restaurant-details/{ownerId}")
@@ -27,7 +28,7 @@ public class RestaurantController {
         return ownerService.getRestaurantsById(restaurantId);
     }
     @PostMapping("/toggle-open-status/{status}/{restaurantId}")
-    public ResponseEntity<String> toggleOpenStatus(@PathVariable boolean status,@PathVariable Long restaurantId){
+    public ResponseEntity<MessageResponse> toggleOpenStatus(@PathVariable boolean status,@PathVariable Long restaurantId){
         return ownerService.toggleOpenStatus(status,restaurantId);
     }
     @GetMapping("/get-restaurant/by-name/{restaurantName}")
@@ -39,7 +40,7 @@ public class RestaurantController {
      return  ownerService.updateRestaurantById(restaurantId,restaurantDetails);
     }
     @DeleteMapping("/delete/restaurant/{restaurantId}")
-    public ResponseEntity<String> detelteRestaurantById(@PathVariable Long restaurantId){
+    public ResponseEntity<MessageResponse> detelteRestaurantById(@PathVariable Long restaurantId){
         return ownerService.deleteRestaurantById(restaurantId);
     }
 }

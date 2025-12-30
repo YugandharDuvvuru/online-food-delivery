@@ -2,10 +2,7 @@ package com.cts.authservice.service;
 
 import com.cts.authservice.client.OwnerServiceClient;
 import com.cts.authservice.client.UserServiceClient;
-import com.cts.authservice.dto.JwtResponseDto;
-import com.cts.authservice.dto.UserDetailsDto;
-import com.cts.authservice.dto.UserLoginDto;
-import com.cts.authservice.dto.UserRegisterResponseDto;
+import com.cts.authservice.dto.*;
 import com.cts.authservice.entity.UserAuthDetails;
 import com.cts.authservice.exceptions.AuthenticationException;
 import com.cts.authservice.repository.AuthRepository;
@@ -37,10 +34,10 @@ public class AuthServiceImpl implements  AuthService{
     @Autowired
     private AuthenticationManager authenticationManager;
     @Override
-    public ResponseEntity<String> registerUser(String role,UserDetailsDto userDetailsDto) {
+    public ResponseEntity<MessageResponse> registerUser(String role, UserDetailsDto userDetailsDto) {
         UserAuthDetails existingUser = authRepo.findByUserEmail(userDetailsDto.getUserEmail());
         if (existingUser != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already registered");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Email already registered"));
         }
         UserAuthDetails user = new UserAuthDetails();
         user.setUserEmail(userDetailsDto.getUserEmail());
@@ -66,7 +63,7 @@ public class AuthServiceImpl implements  AuthService{
             ownerClient.saveOwnerDetails(userData);
 
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("Registration successful");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Registration successful"));
         }
 
     @Override
@@ -89,25 +86,25 @@ public class AuthServiceImpl implements  AuthService{
     }
 
     @Override
-    public String updateEmail(Long authId,String email) {
+    public ResponseEntity<MessageResponse> updateEmail(Long authId,String email) {
         UserAuthDetails userDetails=authRepo.findByUserEmail(email);
         if(userDetails!=null) {
-            return "Email already registered";
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Email already registered"));
         }
         UserAuthDetails userNewDetails=authRepo.findByAuthId(authId);
         userNewDetails.setUserEmail(email);
         authRepo.save(userNewDetails);
-        return "Email updated successfully";
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Email updated successfully"));
 
     }
 
     @Override
-    public String deleteUserById(Long authId) {
+    public ResponseEntity<MessageResponse> deleteUserById(Long authId) {
         UserAuthDetails userDetails=authRepo.findByAuthId(authId);
         if(userDetails==null){
-            return "User Not Found";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("User not found"));
         }
        authRepo.deleteById(authId);
-       return "User Deleted Successfully.";
+        return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("User Deleted Successfully."));
     }
 }

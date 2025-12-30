@@ -1,5 +1,6 @@
 package com.cts.userservice.exceptions;
 
+import com.cts.userservice.dto.MessageResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,19 +10,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
+    public ResponseEntity<MessageResponse> handleAuthenticationException(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ex.getMessage());
+                .body(new MessageResponse(ex.getMessage()));
     }
     @ExceptionHandler(AddressNotFoundException.class)
-    public ResponseEntity<String> handleAddressNotFoundException(AddressNotFoundException ex){
+    public ResponseEntity<MessageResponse> handleAddressNotFoundException(AddressNotFoundException ex){
          return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
+                .body(new MessageResponse(ex.getMessage()));
     }
     @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<String> handleDuplicateEmailException(DuplicateEmailException ex){
+    public ResponseEntity<MessageResponse> handleDuplicateEmailException(DuplicateEmailException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ex.getMessage());
+                .body(new MessageResponse(ex.getMessage()));
     }
 
 }

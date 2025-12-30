@@ -1,21 +1,18 @@
 package com.cts.menuservice.service;
 
-import com.cts.menuservice.dto.FilterDto;
-import com.cts.menuservice.dto.MenuAndRestaurantDto;
-import com.cts.menuservice.dto.MenuDto;
-import com.cts.menuservice.dto.MenuResponseDto;
+import com.cts.menuservice.dto.*;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface MenuService {
-    public ResponseEntity<String> addItemToMenu(Long restaurantId, MenuDto menuDto);
+    public ResponseEntity<MessageResponse> addItemToMenu(Long restaurantId, MenuDto menuDto);
     public ResponseEntity<List<MenuResponseDto>> getItemsFromRestaurant(Long restaurantId);
     public ResponseEntity<MenuResponseDto> getParticularItemDetails(Long itemID);
-    public ResponseEntity<String> toggleAvailbility(Long itemId,boolean status);
+    public ResponseEntity<MessageResponse> toggleAvailbility(Long itemId,boolean status);
     public ResponseEntity<MenuResponseDto> updateItem(Long itemId,MenuDto menuDto);
     public ResponseEntity<List<MenuAndRestaurantDto>> searchItemByName(String name);
     public ResponseEntity<List<MenuAndRestaurantDto>> fitlterByCategoryAndPrice(FilterDto filterDto);
-    public ResponseEntity<String> deleteItemById(Long itemId);
-    public ResponseEntity<String> updateEstimatedItemsDelivered(Long itemId,Integer itemsDelivered);
+    public ResponseEntity<MessageResponse> deleteItemById(Long itemId);
+    public ResponseEntity<MessageResponse> updateEstimatedItemsDelivered(Long itemId,Integer itemsDelivered);
 
 }

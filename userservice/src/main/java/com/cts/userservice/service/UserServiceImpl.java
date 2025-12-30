@@ -1,6 +1,7 @@
 package com.cts.userservice.service;
 
 import com.cts.userservice.client.AuthClient;
+import com.cts.userservice.dto.MessageResponse;
 import com.cts.userservice.dto.UserAddressResponseDto;
 import com.cts.userservice.entity.UserAddress;
 import com.cts.userservice.entity.UserEntity;
@@ -29,9 +30,9 @@ public class UserServiceImpl implements  UserService{
     @Autowired
     private AddressRepository addressRepo;
     @Override
-    public ResponseEntity<String> saveUserDetails(UserEntity userEntity) {
+    public ResponseEntity<MessageResponse> saveUserDetails(UserEntity userEntity) {
         UserEntity user=userRepo.save(userEntity);
-         return ResponseEntity.status(HttpStatus.CREATED).body("User saved successfully");
+         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("User saved successfully"));
     }
 
 
@@ -59,7 +60,7 @@ public class UserServiceImpl implements  UserService{
     }
 
     @Override
-    public ResponseEntity<String> addUserAddress(Long userId, UserAddressDto userAddress) {
+    public ResponseEntity<MessageResponse> addUserAddress(Long userId, UserAddressDto userAddress) {
         Optional<UserEntity> userDetails = userRepo.findByUserId(userId);
         if (userDetails.isEmpty()) {
             throw new AuthenticationException("User not found");
@@ -74,7 +75,7 @@ public class UserServiceImpl implements  UserService{
         address.setState(userAddress.getState());
         address.setPincode(userAddress.getPincode());
         addressRepo.save(address);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Address saved successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Address saved successfully"));
     }
 
 
@@ -137,7 +138,7 @@ public class UserServiceImpl implements  UserService{
 
     @Override
     @Transactional
-    public ResponseEntity<String> deleteUserById(Long userId) {
+    public ResponseEntity<MessageResponse> deleteUserById(Long userId) {
         Optional<UserEntity> userEntity = userRepo.findByUserId(userId);
         if(userEntity.isEmpty()){
             throw new AuthenticationException("User not found");
@@ -145,10 +146,10 @@ public class UserServiceImpl implements  UserService{
         String response=authClient.deleteUserByAuthId(userEntity.get().getAuthId());
         if(response.equals("User Deleted Successfully.")){
             userRepo.deleteById(userId);
-            return ResponseEntity.ok("User Deleted Successfully");
+            return ResponseEntity.ok(new MessageResponse("User Deleted Successfully"));
         }
         else {
-            return ResponseEntity.ok("Error ocuures while deleting the user");
+            return ResponseEntity.ok(new MessageResponse("Error occurs while deleting the user"));
         }
     }
 

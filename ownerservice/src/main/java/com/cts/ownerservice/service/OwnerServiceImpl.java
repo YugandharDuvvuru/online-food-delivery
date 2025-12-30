@@ -1,6 +1,7 @@
 package com.cts.ownerservice.service;
 
 import com.cts.ownerservice.client.AuthClient;
+import com.cts.ownerservice.dto.MessageResponse;
 import com.cts.ownerservice.dto.OwnerDetailsDto;
 import com.cts.ownerservice.dto.RestaurantDetailsDto;
 import com.cts.ownerservice.dto.RestaurantResponseDto;
@@ -14,6 +15,7 @@ import com.cts.ownerservice.repository.OwnerRepository;
 import com.cts.ownerservice.repository.RestaurantRepository;
 import com.cts.ownerservice.util.RestaurantNameNormalizer;
 import jakarta.transaction.Transactional;
+import org.apache.hc.core5.http.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +36,9 @@ public class OwnerServiceImpl implements OwnerService{
     @Autowired
     private OwnerRepository ownerRepo;
     @Override
-    public ResponseEntity<String> saveOwnerDetails(OwnerEntity ownerEntity) {
+    public ResponseEntity<MessageResponse> saveOwnerDetails(OwnerEntity ownerEntity) {
         OwnerEntity owner=ownerRepo.save(ownerEntity);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Owner saved successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Owner saved successfully"));
     }
     @Override
     public ResponseEntity<OwnerDetailsDto> getOwnerDetailsById(Long id) {
@@ -57,7 +59,7 @@ public class OwnerServiceImpl implements OwnerService{
         return ResponseEntity.ok(dto);
     }
     @Override
-    public ResponseEntity<String> addRestaurants(Long ownerId, RestaurantDetailsDto restaurantDetails) {
+    public ResponseEntity<MessageResponse> addRestaurants(Long ownerId, RestaurantDetailsDto restaurantDetails) {
         Optional<OwnerEntity> ownerExsists=ownerRepo.findByOwnerId(ownerId);
         if(!ownerExsists.isPresent()){
             throw new AuthenticationException("Owner not found");
@@ -72,7 +74,7 @@ public class OwnerServiceImpl implements OwnerService{
         restaurant.setCity(restaurantDetails.getCity());
         restaurant.setOpen(restaurantDetails.isOpen());
         restaurantRepo.save(restaurant);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Restaurant saved successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Restaurant saved successfully"));
     }
     @Override
     public ResponseEntity<List<RestaurantResponseDto>> getResataurantsOfOwner(Long ownerId) {
@@ -109,7 +111,7 @@ public class OwnerServiceImpl implements OwnerService{
         return ResponseEntity.ok(dto);
     }
     @Override
-    public ResponseEntity<String> toggleOpenStatus(boolean status, Long restaurantId) {
+    public ResponseEntity<MessageResponse> toggleOpenStatus(boolean status, Long restaurantId) {
         Optional<RestaurantEntity> restaurant = restaurantRepo.findByRestaurantId(restaurantId);
         if (restaurant.isEmpty()) {
             throw new NoRestaurantFoundException("No restaurant found with Id " + restaurantId);
@@ -117,7 +119,7 @@ public class OwnerServiceImpl implements OwnerService{
         RestaurantEntity toggleRestaurant = restaurant.get();
         toggleRestaurant.setOpen(status);
         restaurantRepo.save(toggleRestaurant);
-        return ResponseEntity.ok("Restaurant open status updated to: " + status);
+        return ResponseEntity.ok(new MessageResponse("Restaurant open status updated to: " + status));
     }
 
     @Override
@@ -158,13 +160,13 @@ public class OwnerServiceImpl implements OwnerService{
     }
 
     @Override
-    public ResponseEntity<String> deleteRestaurantById(Long restaurantId) {
+    public ResponseEntity<MessageResponse> deleteRestaurantById(Long restaurantId) {
         Optional<RestaurantEntity> restaurant=restaurantRepo.findByRestaurantId(restaurantId);
         if(restaurant.isEmpty()){
             throw new NoRestaurantFoundException("No restaurant found with Id " + restaurantId);
         }
         restaurantRepo.deleteById(restaurantId);
-        return ResponseEntity.ok("Restaurant with id "+restaurantId+" deleted successfully");
+        return ResponseEntity.ok(new MessageResponse("Restaurant with id "+restaurantId+" deleted successfully"));
     }
     @Override
     @Transactional
@@ -199,7 +201,7 @@ public class OwnerServiceImpl implements OwnerService{
     }
 
     @Override
-    public ResponseEntity<String> deleteOwnerById(Long ownerId) {
+    public ResponseEntity<MessageResponse> deleteOwnerById(Long ownerId) {
         Optional<OwnerEntity> userEntity = ownerRepo.findByOwnerId(ownerId);
         if(userEntity.isEmpty()){
             throw new AuthenticationException("User not found");
@@ -207,10 +209,10 @@ public class OwnerServiceImpl implements OwnerService{
         String response=authClient.deleteUserByAuthId(userEntity.get().getAuthId());
         if(response.equals("User Deleted Successfully.")){
             ownerRepo.deleteById(ownerId);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(new MessageResponse(response));
         }
         else {
-            return ResponseEntity.ok("Error ocuures while deleting the user");
+            return ResponseEntity.ok(new MessageResponse("Error ocuures while deleting the user"));
         }
     }
 }

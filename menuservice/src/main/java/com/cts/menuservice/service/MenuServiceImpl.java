@@ -26,13 +26,13 @@ public class MenuServiceImpl implements  MenuService{
     @Autowired
     private MenuRepository menuRepo;
     @Override
-    public ResponseEntity<String> addItemToMenu(Long restaurantId, MenuDto menuDto) {
+    public ResponseEntity<MessageResponse> addItemToMenu(Long restaurantId, MenuDto menuDto) {
         String normalizedKey = MenuItemNameNormalizer.normalize(menuDto.getItemName());
         boolean itemExists=menuRepo.existsByRestaurantIdAndItemNameKey(restaurantId,normalizedKey);
 
         if (itemExists) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Item already exists in this restaurant: " + menuDto.getItemName());
+                    .body(new MessageResponse("Item already exists in this restaurant: " + menuDto.getItemName()));
         }
 
         // Set the normalized key in the entity before saving
@@ -48,7 +48,7 @@ public class MenuServiceImpl implements  MenuService{
         menuRepo.save(entity);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Item added successfully: " + menuDto.getItemName());
+                .body(new MessageResponse("Item added successfully: " + menuDto.getItemName()));
 
     }
 
@@ -100,7 +100,7 @@ public class MenuServiceImpl implements  MenuService{
     }
 
     @Override
-    public ResponseEntity<String> toggleAvailbility(Long itemId, boolean status) {
+    public ResponseEntity<MessageResponse> toggleAvailbility(Long itemId, boolean status) {
         Optional<MenuEntity> item=menuRepo.findByItemId(itemId);
         if(item.isEmpty()){
             throw new ItemNotFoundException("Item not found with itemId "+ itemId);
@@ -108,7 +108,7 @@ public class MenuServiceImpl implements  MenuService{
         MenuEntity itemDetails=item.get();
         itemDetails.setAvailaible(status);
         menuRepo.save(itemDetails);
-        return ResponseEntity.ok("Availaiblity updated to "+status);
+        return ResponseEntity.ok(new MessageResponse("Availaiblity updated to "+status));
     }
 
 
@@ -225,17 +225,17 @@ public class MenuServiceImpl implements  MenuService{
     }
 
     @Override
-    public ResponseEntity<String> deleteItemById(Long itemId) {
+    public ResponseEntity<MessageResponse> deleteItemById(Long itemId) {
         Optional<MenuEntity> item=menuRepo.findByItemId(itemId);
         if( item==null || item.isEmpty()){
             throw new ItemNotFoundException("Item not found with itemId "+itemId);
         }
         menuRepo.deleteById(itemId);
-        return ResponseEntity.ok("Menu Item with id "+itemId+" deleted successfully");
+        return ResponseEntity.ok(new MessageResponse("Menu Item with id "+itemId+" deleted successfully"));
     }
 
     @Override
-    public ResponseEntity<String> updateEstimatedItemsDelivered(Long itemId,Integer itemsDelivered) {
+    public ResponseEntity<MessageResponse> updateEstimatedItemsDelivered(Long itemId,Integer itemsDelivered) {
         Optional<MenuEntity> itemToUpdate=menuRepo.findByItemId(itemId) ;
         if(itemToUpdate.isEmpty()){
             throw new ItemNotFoundException("Item not found with itemId "+ itemId);
@@ -243,7 +243,7 @@ public class MenuServiceImpl implements  MenuService{
         MenuEntity entity=itemToUpdate.get();
         entity.setEstimatedItemsDelivered(itemsDelivered);
         menuRepo.save(entity);
-        return ResponseEntity.ok("Items to be delivered successfully updated");
+        return ResponseEntity.ok(new MessageResponse("Items to be delivered successfully updated"));
 
     }
 }

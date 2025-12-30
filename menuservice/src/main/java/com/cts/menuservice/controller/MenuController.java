@@ -1,10 +1,8 @@
 package com.cts.menuservice.controller;
 
-import com.cts.menuservice.dto.FilterDto;
-import com.cts.menuservice.dto.MenuAndRestaurantDto;
-import com.cts.menuservice.dto.MenuDto;
-import com.cts.menuservice.dto.MenuResponseDto;
+import com.cts.menuservice.dto.*;
 import com.cts.menuservice.service.MenuService;
+import com.cts.menuservice.service.MenuServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,7 @@ public class MenuController {
     private MenuService menuService;
 
     @PostMapping("/add-item/{restaurantId}")
-    public ResponseEntity<String> addItemsToMenu(@PathVariable Long restaurantId, @RequestBody MenuDto menuDto) {
+    public ResponseEntity<MessageResponse> addItemsToMenu(@PathVariable Long restaurantId, @RequestBody MenuDto menuDto) {
         return menuService.addItemToMenu(restaurantId, menuDto);
     }
 
@@ -33,7 +31,7 @@ public class MenuController {
     }
 
     @PatchMapping("/toggle/availaibility/item/{itemId}/{status}")
-    public ResponseEntity<String> toggleAvailbility(@PathVariable Long itemId, @PathVariable boolean status) {
+    public ResponseEntity<MessageResponse> toggleAvailbility(@PathVariable Long itemId, @PathVariable boolean status) {
         return menuService.toggleAvailbility(itemId, status);
     }
 
@@ -53,12 +51,12 @@ public class MenuController {
     }
 
     @DeleteMapping("/remove/item/{itemId}")
-    public ResponseEntity<String> deleteItemById(@PathVariable Long itemId) {
+    public ResponseEntity<MessageResponse> deleteItemById(@PathVariable Long itemId) {
         return menuService.deleteItemById(itemId);
     }
 
-    @PatchMapping("/update/no-of-items-delivered/{itemId}/{estimatedItemsDelivered}")
-    public ResponseEntity<String> updateEstimatedItemsDelivered(@PathVariable Long itemId,@PathVariable Integer estimatedItemsDelivered){
+    @PutMapping("/update/no-of-items-delivered/{itemId}/{estimatedItemsDelivered}")
+    public ResponseEntity<MessageResponse> updateEstimatedItemsDelivered(@PathVariable Long itemId,@PathVariable Integer estimatedItemsDelivered){
         return menuService.updateEstimatedItemsDelivered(itemId,estimatedItemsDelivered);
     }
 }

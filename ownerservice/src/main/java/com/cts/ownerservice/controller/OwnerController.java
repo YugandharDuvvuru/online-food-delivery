@@ -1,5 +1,6 @@
 package com.cts.ownerservice.controller;
 
+import com.cts.ownerservice.dto.MessageResponse;
 import com.cts.ownerservice.dto.OwnerDetailsDto;
 import com.cts.ownerservice.entity.OwnerEntity;
 import com.cts.ownerservice.service.OwnerService;
@@ -12,7 +13,7 @@ public class OwnerController {
     @Autowired
     private OwnerService ownerService;
     @PostMapping("/save-details")
-    public ResponseEntity<String> saveOwnerDetails(@RequestBody OwnerEntity ownerEntity){
+    public ResponseEntity<MessageResponse> saveOwnerDetails(@RequestBody OwnerEntity ownerEntity){
         return ownerService.saveOwnerDetails(ownerEntity);
     }
     @GetMapping("/get-details-by-id/{id}")
@@ -24,7 +25,7 @@ public class OwnerController {
          return ownerService.updateOwnerById(ownerId,ownerDetails);
     }
     @DeleteMapping("/delete/owner-by/{ownerId}")
-    public ResponseEntity<String> deleteOwnerById(@PathVariable Long ownerId){
+    public ResponseEntity<MessageResponse> deleteOwnerById(@PathVariable Long ownerId){
         return ownerService.deleteOwnerById(ownerId);
     }
 

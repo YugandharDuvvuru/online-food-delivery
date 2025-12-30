@@ -1,5 +1,6 @@
 package com.cts.userservice.controller;
 
+import com.cts.userservice.dto.MessageResponse;
 import com.cts.userservice.dto.UserAddressResponseDto;
 import com.cts.userservice.entity.UserEntity;
 import com.cts.userservice.dto.UserAddressDto;
@@ -17,7 +18,7 @@ public class UserController {
     @Autowired
     private UserService userService;
     @PostMapping("/save-details")
-    public ResponseEntity<String> saveUserDetails(@RequestBody UserEntity userEntity){
+    public ResponseEntity<MessageResponse> saveUserDetails(@RequestBody UserEntity userEntity){
         return userService.saveUserDetails(userEntity);
     }
     @GetMapping("/get-details-by-id/{id}")
@@ -25,7 +26,7 @@ public class UserController {
       return userService.getUserDetailsById(id);
     }
     @PostMapping("/add-address/{userId}")
-    public ResponseEntity<String> addUserAddress(@PathVariable Long userId, @RequestBody UserAddressDto userAddress){
+    public ResponseEntity<MessageResponse> addUserAddress(@PathVariable Long userId, @RequestBody UserAddressDto userAddress){
         return userService.addUserAddress(userId,userAddress);
     }
     @GetMapping("/get-address/{userId}")
@@ -37,7 +38,7 @@ public class UserController {
         return userService.updateUserById(userId,userDetails);
     }
     @DeleteMapping("/delete/user-by/{userId}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long userId){
+    public ResponseEntity<MessageResponse> deleteUserById(@PathVariable Long userId){
         return userService.deleteUserById(userId);
     }
 }
