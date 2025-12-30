@@ -1,20 +1,13 @@
 package com.cts.orderservice.entity;
-
-<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-=======
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
->>>>>>> 139106114d557b4e10880cd7fa32ac7fa6de98fb
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-<<<<<<< HEAD
 @Entity
 public class OrderItems {
 
@@ -145,25 +138,4 @@ public class OrderItems {
                 // avoid printing 'order' to prevent recursion or huge output
                 '}';
     }
-
-=======
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class OrderItems {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long orderItemsId;
-	private Long itemId;
-    private Long restaurantId;
-    private String itemName;
-    private Integer price;
-    private Integer estimatedItemsDelivered;
-    private boolean availaible;
-    private String category;
-    @ManyToOne
-    @JoinColumn(name = "orderId")
-    private OrderEntity order;
-
->>>>>>> 139106114d557b4e10880cd7fa32ac7fa6de98fb
 }

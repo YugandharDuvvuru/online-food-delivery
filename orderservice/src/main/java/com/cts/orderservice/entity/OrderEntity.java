@@ -2,11 +2,7 @@ package com.cts.orderservice.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-<<<<<<< HEAD
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-=======
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.FetchType;
@@ -14,10 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
->>>>>>> 139106114d557b4e10880cd7fa32ac7fa6de98fb
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 @Entity
 public class OrderEntity {
 	@Id
