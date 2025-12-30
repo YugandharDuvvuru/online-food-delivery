@@ -1,5 +1,5 @@
-
 package com.cts.authservice.config;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class AuthServiceConfig {
+
     @Autowired
     private UserDetailsService customUserDetailsService;
 
@@ -25,12 +26,20 @@ public class AuthServiceConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> {}) // will use the CorsFilter bean defined above
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/user-register/{role}","/auth/user-login","/auth/update/email/by-authId/{authId}/{email}","/auth/delete/the/user/by/{authId}").permitAll()
+                        .requestMatchers(
+                                "/auth/user-register/**",
+                                "/auth/user-login",
+                                "/auth/update/email/by-authId/**",
+                                "/auth/delete/the/user/by/**",
+                                "/auth/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider());
+
         return http.build();
     }
 
@@ -46,7 +55,7 @@ public class AuthServiceConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
