@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import org.hibernate.annotations.Fetch;
 
 @Entity
 public class OrderItems {
@@ -22,7 +23,7 @@ public class OrderItems {
     private boolean availaible; // consider renaming to `available`
     private String category;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "orderId")
     @JsonIgnore
     private OrderEntity order;

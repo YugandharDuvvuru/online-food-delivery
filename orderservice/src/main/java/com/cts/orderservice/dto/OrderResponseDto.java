@@ -27,7 +27,7 @@ public class OrderResponseDto {
     private Long userId;
     private Integer totalAmount;
     private String invoiceNumber;
-    private String status;
+    private String orderStatus;
     private LocalDateTime orderTime;
     private List<OrderItems> orderItems;
     private DeliveryAddress address;
@@ -41,7 +41,7 @@ public class OrderResponseDto {
                             Long userId,
                             Integer totalAmount,
                             String invoiceNumber,
-                            String status,
+                            String orderStatus,
                             LocalDateTime orderTime,
                             List<OrderItems> orderItems,
                             DeliveryAddress address) {
@@ -49,7 +49,7 @@ public class OrderResponseDto {
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.invoiceNumber = invoiceNumber;
-        this.status = status;
+        this.orderStatus = orderStatus;
         this.orderTime = orderTime;
         this.orderItems = orderItems;
         this.address = address;
@@ -61,7 +61,7 @@ public class OrderResponseDto {
         this.userId = entity.getUserId();
         this.totalAmount = entity.getTotalAmount();
         this.invoiceNumber = entity.getInvoiceNumber();
-        this.status = entity.getStatus();
+        this.orderStatus = entity.getOrderStatus();
         this.orderTime = entity.getOrderTime();
         this.orderItems = entity.getOrderItems();
         this.address = entity.getAddress();
@@ -101,12 +101,12 @@ public class OrderResponseDto {
         this.invoiceNumber = invoiceNumber;
     }
 
-    public String getStatus() {
-        return status;
+    public String getOrderStatus() {
+        return orderStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderTime() {

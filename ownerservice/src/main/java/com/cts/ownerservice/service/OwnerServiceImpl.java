@@ -1,6 +1,7 @@
 package com.cts.ownerservice.service;
 
 import com.cts.ownerservice.client.AuthClient;
+import com.cts.ownerservice.client.MenuClient;
 import com.cts.ownerservice.dto.MessageResponse;
 import com.cts.ownerservice.dto.OwnerDetailsDto;
 import com.cts.ownerservice.dto.RestaurantDetailsDto;
@@ -27,6 +28,8 @@ import java.util.Optional;
 
 @Service
 public class OwnerServiceImpl implements OwnerService{
+	@Autowired
+	private MenuClient menuClient;
     @Autowired
     private AuthClient authClient;
     @Autowired
@@ -164,7 +167,9 @@ public class OwnerServiceImpl implements OwnerService{
         Optional<RestaurantEntity> restaurant=restaurantRepo.findByRestaurantId(restaurantId);
         if(restaurant.isEmpty()){
             throw new NoRestaurantFoundException("No restaurant found with Id " + restaurantId);
+
         }
+        menuClient.deleteItemsOfRestaurant(restaurantId);
         restaurantRepo.deleteById(restaurantId);
         return ResponseEntity.ok(new MessageResponse("Restaurant with id "+restaurantId+" deleted successfully"));
     }
@@ -178,8 +183,8 @@ public class OwnerServiceImpl implements OwnerService{
                 && !ownerDetails.getEmail().equals(owner.getEmail());
         if (emailChanged) {
             System.out.println("email changed");
-            String authResp = authClient.updateEmail(owner.getAuthId(), ownerDetails.getEmail());
-            String message = (authResp != null ? authResp : null);
+            ResponseEntity<MessageResponse> authResp = authClient.updateEmail(owner.getAuthId(), ownerDetails.getEmail());
+            String message = (authResp != null ? authResp.getBody().getMessage() : null);
             if ("Email already registered".equals(message)) {
                throw new DuplicateEmailException("Email already registered try with another Mail.");
             }

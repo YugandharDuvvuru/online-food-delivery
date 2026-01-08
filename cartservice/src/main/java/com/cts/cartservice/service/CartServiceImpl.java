@@ -1,9 +1,11 @@
 package com.cts.cartservice.service;
 
 import com.cts.cartservice.client.MenuClient;
+import com.cts.cartservice.client.RestaurantClient;
 import com.cts.cartservice.dto.CartItemDto;
 import com.cts.cartservice.dto.MenuResponseDto;
 import com.cts.cartservice.dto.MessageResponse;
+import com.cts.cartservice.dto.RestaurantResponseDto;
 import com.cts.cartservice.entity.CartItem;
 import com.cts.cartservice.repository.CartRepository;
 import jakarta.transaction.Transactional;
@@ -17,6 +19,8 @@ import java.util.*;
 
 @Service
 public class CartServiceImpl implements CartService{
+	@Autowired
+	private RestaurantClient restaurantClient;
     @Autowired
     private MenuClient client;
     @Autowired
@@ -118,6 +122,8 @@ public class CartServiceImpl implements CartService{
         for(CartItem item:cartItems){
             MenuResponseDto menuDeatils=client.getParticularItemDetails(item.getItemId()).getBody();
             menuDeatils.setQuantity(item.getQuantity());
+            RestaurantResponseDto restaurantDto=restaurantClient.getRestaurantById(menuDeatils.getRestaurantId()).getBody();
+            menuDeatils.setRestaurantName(restaurantDto.getName());
             dto.add(menuDeatils);
         }
         return ResponseEntity.ok(dto);

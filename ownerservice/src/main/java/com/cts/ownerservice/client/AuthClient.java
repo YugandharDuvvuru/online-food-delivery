@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import com.cts.ownerservice.dto.MessageResponse;
+
 
 @FeignClient(name="AUTHSERVICE")
 public interface AuthClient {
     @PutMapping("auth/update/email/by-authId/{authId}/{email}")
-    public String updateEmail(@PathVariable Long authId, @PathVariable String email);
+    public ResponseEntity<MessageResponse> updateEmail(@PathVariable Long authId, @PathVariable String email);
 
     @DeleteMapping("auth/delete/the/user/by/{authId}")
     public String deleteUserByAuthId(@PathVariable Long authId);

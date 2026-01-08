@@ -8,6 +8,9 @@ import com.cts.menuservice.exceptions.ItemNotFoundException;
 import com.cts.menuservice.exceptions.MenuItemsNotFoundException;
 import com.cts.menuservice.repository.MenuRepository;
 import com.cts.menuservice.util.MenuItemNameNormalizer;
+
+import jakarta.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -107,6 +110,7 @@ public class MenuServiceImpl implements  MenuService{
         }
         MenuEntity itemDetails=item.get();
         itemDetails.setAvailaible(status);
+        System.out.println(itemDetails.isAvailaible());
         menuRepo.save(itemDetails);
         return ResponseEntity.ok(new MessageResponse("Availaiblity updated to "+status));
     }
@@ -246,4 +250,13 @@ public class MenuServiceImpl implements  MenuService{
         return ResponseEntity.ok(new MessageResponse("Items to be delivered successfully updated"));
 
     }
+
+
+	@Override
+	@Transactional
+	public void deleteItemsOfRestaurant(Long restaurantId) {
+		menuRepo.deleteByRestaurantId(restaurantId);
+		
+		
+	}
 }

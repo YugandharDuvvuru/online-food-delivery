@@ -73,7 +73,7 @@ public class AuthServiceImpl implements  AuthService{
         );
 
         if (!authentication.isAuthenticated()) {
-
+        	System.out.println("authentication failed");
             throw new AuthenticationException("Authentication failed");
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -82,6 +82,7 @@ public class AuthServiceImpl implements  AuthService{
         JwtResponseDto jwtResponseDto=new JwtResponseDto();
         jwtResponseDto.setJwtToken(token);
         jwtResponseDto.setJwtTokenExpiration(String.valueOf(expiry));
+        System.out.println("authentication passed");
         return ResponseEntity.status(HttpStatus.OK).body(jwtResponseDto);
     }
 
@@ -89,7 +90,7 @@ public class AuthServiceImpl implements  AuthService{
     public ResponseEntity<MessageResponse> updateEmail(Long authId,String email) {
         UserAuthDetails userDetails=authRepo.findByUserEmail(email);
         if(userDetails!=null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse("Email already registered"));
+            return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("Email already registered"));
         }
         UserAuthDetails userNewDetails=authRepo.findByAuthId(authId);
         userNewDetails.setUserEmail(email);

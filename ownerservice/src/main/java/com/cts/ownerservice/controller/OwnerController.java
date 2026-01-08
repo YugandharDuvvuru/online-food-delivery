@@ -18,7 +18,8 @@ public class OwnerController {
     }
     @GetMapping("/get-details-by-id/{id}")
     public ResponseEntity<OwnerDetailsDto> getOwnerDetails(@PathVariable Long id){
-        return ownerService.getOwnerDetailsById(id);
+    	System.out.println("hello world");
+    	return ownerService.getOwnerDetailsById(id);
     }
     @PutMapping("/update/owner-details/{ownerId}")
     public ResponseEntity<OwnerDetailsDto> updateOwnerDetails(@PathVariable Long ownerId,@RequestBody OwnerDetailsDto ownerDetails){
@@ -28,5 +29,6 @@ public class OwnerController {
     public ResponseEntity<MessageResponse> deleteOwnerById(@PathVariable Long ownerId){
         return ownerService.deleteOwnerById(ownerId);
     }
+
 
 }

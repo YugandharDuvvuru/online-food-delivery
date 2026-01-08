@@ -32,7 +32,8 @@ public class MenuController {
 
     @PatchMapping("/toggle/availaibility/item/{itemId}/{status}")
     public ResponseEntity<MessageResponse> toggleAvailbility(@PathVariable Long itemId, @PathVariable boolean status) {
-        return menuService.toggleAvailbility(itemId, status);
+    	System.out.println(status);
+    	return menuService.toggleAvailbility(itemId, status);
     }
 
     @PutMapping("/update/item-details/{itemId}")
@@ -58,5 +59,9 @@ public class MenuController {
     @PutMapping("/update/no-of-items-delivered/{itemId}/{estimatedItemsDelivered}")
     public ResponseEntity<MessageResponse> updateEstimatedItemsDelivered(@PathVariable Long itemId,@PathVariable Integer estimatedItemsDelivered){
         return menuService.updateEstimatedItemsDelivered(itemId,estimatedItemsDelivered);
+    }
+    @DeleteMapping("/delete/items/by/{restaurantId}")
+    public void deleteItemsOfRestaurant(@PathVariable Long restaurantId) {
+    	menuService.deleteItemsOfRestaurant(restaurantId);
     }
 }

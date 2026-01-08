@@ -23,6 +23,7 @@ public class AuthController {
     }
     @PostMapping("/user-login")
     public ResponseEntity<JwtResponseDto> validateUserLogin(@RequestBody UserLoginDto userLoginDto){
+    	System.out.println("helloworld");
         return authService.checkLoginDetails(userLoginDto);
     }
     @PutMapping ("/update/email/by-authId/{authId}/{email}")

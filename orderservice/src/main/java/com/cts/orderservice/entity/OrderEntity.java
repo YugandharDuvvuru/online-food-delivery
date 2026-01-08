@@ -17,10 +17,11 @@ public class OrderEntity {
 	private Long orderId;
 	private Long userId;
 	private Integer totalAmount;
-	private String invoiceNumber;
-	private String status;
-	private LocalDateTime orderTime;
-	@OneToMany(mappedBy = "order",fetch = FetchType.LAZY,cascade = CascadeType.ALL )
+    private String invoiceNumber;
+	private String orderStatus;
+    private boolean amountPaid;
+    private LocalDateTime orderTime;
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY,cascade = CascadeType.ALL )
 	private List<OrderItems> orderItems;
 	@Embedded
 	private DeliveryAddress address;
@@ -57,12 +58,20 @@ public class OrderEntity {
         this.invoiceNumber = invoiceNumber;
     }
 
-    public String getStatus() {
-        return status;
+    public String getOrderStatus() {
+        return orderStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public boolean isAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(boolean amountPaid) {
+        this.amountPaid = amountPaid;
     }
 
     public LocalDateTime getOrderTime() {
@@ -88,7 +97,6 @@ public class OrderEntity {
     public void setAddress(DeliveryAddress address) {
         this.address = address;
     }
-
     public OrderEntity() {
     }
 
@@ -96,7 +104,8 @@ public class OrderEntity {
                        Long userId,
                        Integer totalAmount,
                        String invoiceNumber,
-                       String status,
+                       String orderStatus,
+                       boolean amountPaid,
                        LocalDateTime orderTime,
                        List<OrderItems> orderItems,
                        DeliveryAddress address) {
@@ -104,7 +113,8 @@ public class OrderEntity {
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.invoiceNumber = invoiceNumber;
-        this.status = status;
+        this.orderStatus = orderStatus;
+        this.amountPaid=amountPaid;
         this.orderTime = orderTime;
         this.orderItems = orderItems;
         this.address = address;

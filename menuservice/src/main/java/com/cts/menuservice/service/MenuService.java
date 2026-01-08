@@ -14,5 +14,6 @@ public interface MenuService {
     public ResponseEntity<List<MenuAndRestaurantDto>> fitlterByCategoryAndPrice(FilterDto filterDto);
     public ResponseEntity<MessageResponse> deleteItemById(Long itemId);
     public ResponseEntity<MessageResponse> updateEstimatedItemsDelivered(Long itemId,Integer itemsDelivered);
+    public void deleteItemsOfRestaurant(Long restaurantId);
 
 }

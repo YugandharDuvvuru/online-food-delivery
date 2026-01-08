@@ -11,6 +11,7 @@ public class MenuResponseDto {
     private Long restaurantId;
     private String itemName;
     private Integer price;
+    private String restaurantName;
     private boolean availaible;
     private Integer quantity;
     private Integer estimatedItemsDelivered;
