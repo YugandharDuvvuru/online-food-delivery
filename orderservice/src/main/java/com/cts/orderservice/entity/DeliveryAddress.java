@@ -8,10 +8,12 @@ public class DeliveryAddress {
 
     private String houseNo;
     private String streetName;
+
     private String town;
     private String district;
     private String state;
     private String pincode;
+    private String userMobileNumber;
 
     // No-args constructor
     public DeliveryAddress() {
@@ -23,13 +25,15 @@ public class DeliveryAddress {
                            String town,
                            String district,
                            String state,
-                           String pincode) {
+                           String pincode,
+                           String userMobileNumber) {
         this.houseNo = houseNo;
         this.streetName = streetName;
         this.town = town;
         this.district = district;
         this.state = state;
         this.pincode = pincode;
+        this.userMobileNumber=userMobileNumber;
     }
 
     public String getHouseNo() {
@@ -77,6 +81,13 @@ public class DeliveryAddress {
 
     public void setPincode(String pincode) {
         this.pincode = pincode;
+    }
+    public String getUserMobileNumber() {
+        return userMobileNumber;
+    }
+
+    public void setUserMobileNumber(String userMobileNumber) {
+        this.userMobileNumber = userMobileNumber;
     }
 }
 

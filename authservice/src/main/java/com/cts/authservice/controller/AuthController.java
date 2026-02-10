@@ -8,6 +8,7 @@ import com.cts.authservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -26,10 +27,12 @@ public class AuthController {
     	System.out.println("helloworld");
         return authService.checkLoginDetails(userLoginDto);
     }
+    @PreAuthorize("hasAnyRole('USER','OWNER')")
     @PutMapping ("/update/email/by-authId/{authId}/{email}")
     public ResponseEntity<MessageResponse> updateEmail(@PathVariable Long authId,@PathVariable String email){
       return authService.updateEmail(authId,email);
     }
+    @PreAuthorize("hasAnyRole('USER','OWNER')")
     @DeleteMapping("delete/the/user/by/{authId}")
     public ResponseEntity<MessageResponse>  deleteUserByAuthId(@PathVariable Long authId){
         return authService.deleteUserById(authId);

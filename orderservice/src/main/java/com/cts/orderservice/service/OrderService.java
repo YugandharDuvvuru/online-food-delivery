@@ -10,7 +10,7 @@ import com.cts.orderservice.dto.OrderResponseDto;
 import java.util.List;
 
 public interface OrderService {
-	public ResponseEntity<OrderResponseDto> placeOrder(Long userId,OrderRequestDto request);
+	public ResponseEntity<OrderResponseDto> placeOrder(Long userId,OrderRequestDto request,String token);
     public ResponseEntity<MessageResponse> toggleOrderStatus(String status, Long orderId);
     public ResponseEntity<OrderResponseDto> getOrderDetails(Long orderId);
     public ResponseEntity<MessageResponse> cancelOrder(Long orderId);

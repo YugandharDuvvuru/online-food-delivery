@@ -22,7 +22,8 @@ public class RestaurantOrderSummaryDto {
                                      String status,
                                      Integer subtotal,
                                      DeliveryAddress address,
-                                     List<RestaurantOrderItemDto> items) {
+                                     List<RestaurantOrderItemDto> items
+                                     ) {
         this.orderId = orderId;
         this.invoiceNumber = invoiceNumber;
         this.orderTime = orderTime;

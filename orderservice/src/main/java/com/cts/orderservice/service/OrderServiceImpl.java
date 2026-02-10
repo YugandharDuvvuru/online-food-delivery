@@ -5,17 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.cts.orderservice.client.MenuClient;
 import com.cts.orderservice.dto.*;
 import com.cts.orderservice.exception.OrderNotFoundException;
 import jakarta.transaction.Transactional;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cts.orderservice.Repository.OrderRepository;
-import com.cts.orderservice.client.CartClient;
+import com.cts.orderservice.client.CartAndMenuClient;
 import com.cts.orderservice.entity.OrderEntity;
 import com.cts.orderservice.entity.OrderItems;
 import com.cts.orderservice.exception.CartEmptyException;
@@ -27,14 +25,12 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrderRepository orderRepo;
 	@Autowired
-	private CartClient cartClient;
-    @Autowired
-    private MenuClient menuClient;
+	private CartAndMenuClient client;
 
 	@Override
     @Transactional
-	public ResponseEntity<OrderResponseDto> placeOrder(Long userId, OrderRequestDto request) {
-		List<MenuResponseDto> cartItems=cartClient.getAllCartItemsForUser(userId).getBody();
+	public ResponseEntity<OrderResponseDto> placeOrder(Long userId, OrderRequestDto request,String token) {
+		List<MenuResponseDto> cartItems=client.getAllCartItemsForUser(token,userId).getBody();
 		if(cartItems.size()==0) {
             System.out.println("cart items is empty");
 			throw new CartEmptyException("Cart is empty");
@@ -45,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
 			if(item.getEstimatedItemsDelivered()<item.getQuantity()) {
 				throw new ItemUnavailableException("Item is not availaible at the moment (out of stock) for "+item.getItemName()+" in this restuarant");
 			}
-            menuClient.updateEstimatedItemsDelivered(item.getItemId(),item.getEstimatedItemsDelivered()-item.getQuantity());
+            client.updateEstimatedItemsDelivered(token,item.getItemId(),item.getEstimatedItemsDelivered()-item.getQuantity());
 			OrderItems items=new OrderItems();
 			items.setItemId(item.getItemId());
 			items.setItemName(item.getItemName());
@@ -74,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
         entity.setOrderItems(orderItems);
         orderRepo.save(entity);
         OrderResponseDto dto=new OrderResponseDto(entity);
-        cartClient.deleteAllCartItems(userId);
+        client.deleteAllCartItems(token,userId);
         
 		return ResponseEntity.ok(dto);
 	}

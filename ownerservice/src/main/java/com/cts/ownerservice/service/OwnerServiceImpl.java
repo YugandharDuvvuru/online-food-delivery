@@ -1,7 +1,6 @@
 package com.cts.ownerservice.service;
 
-import com.cts.ownerservice.client.AuthClient;
-import com.cts.ownerservice.client.MenuClient;
+import com.cts.ownerservice.client.AuthAndMenuClient;
 import com.cts.ownerservice.dto.MessageResponse;
 import com.cts.ownerservice.dto.OwnerDetailsDto;
 import com.cts.ownerservice.dto.RestaurantDetailsDto;
@@ -16,7 +15,6 @@ import com.cts.ownerservice.repository.OwnerRepository;
 import com.cts.ownerservice.repository.RestaurantRepository;
 import com.cts.ownerservice.util.RestaurantNameNormalizer;
 import jakarta.transaction.Transactional;
-import org.apache.hc.core5.http.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +26,8 @@ import java.util.Optional;
 
 @Service
 public class OwnerServiceImpl implements OwnerService{
-	@Autowired
-	private MenuClient menuClient;
     @Autowired
-    private AuthClient authClient;
+    private AuthAndMenuClient client;
     @Autowired
     private RestaurantNameNormalizer nameNormalizer;
     @Autowired
@@ -163,27 +159,27 @@ public class OwnerServiceImpl implements OwnerService{
     }
 
     @Override
-    public ResponseEntity<MessageResponse> deleteRestaurantById(Long restaurantId) {
+    public ResponseEntity<MessageResponse> deleteRestaurantById(Long restaurantId,String token) {
         Optional<RestaurantEntity> restaurant=restaurantRepo.findByRestaurantId(restaurantId);
         if(restaurant.isEmpty()){
             throw new NoRestaurantFoundException("No restaurant found with Id " + restaurantId);
 
         }
-        menuClient.deleteItemsOfRestaurant(restaurantId);
+        client.deleteItemsOfRestaurant(token,restaurantId);
         restaurantRepo.deleteById(restaurantId);
         return ResponseEntity.ok(new MessageResponse("Restaurant with id "+restaurantId+" deleted successfully"));
     }
     @Override
     @Transactional
     //make sure to send only the changed details from the frontend (If the email is unchanged and you thet email it will give conflict)
-    public ResponseEntity<OwnerDetailsDto> updateOwnerById(Long ownerId, OwnerDetailsDto ownerDetails) {
+    public ResponseEntity<OwnerDetailsDto> updateOwnerById(Long ownerId, OwnerDetailsDto ownerDetails,String token) {
         OwnerEntity owner = ownerRepo.findByOwnerId(ownerId)
                 .orElseThrow(() -> new AuthenticationException("Owner not found"));
         boolean emailChanged = ownerDetails.getEmail() != null
                 && !ownerDetails.getEmail().equals(owner.getEmail());
         if (emailChanged) {
             System.out.println("email changed");
-            ResponseEntity<MessageResponse> authResp = authClient.updateEmail(owner.getAuthId(), ownerDetails.getEmail());
+            ResponseEntity<MessageResponse> authResp = client.updateEmail(token,owner.getAuthId(), ownerDetails.getEmail());
             String message = (authResp != null ? authResp.getBody().getMessage() : null);
             if ("Email already registered".equals(message)) {
                throw new DuplicateEmailException("Email already registered try with another Mail.");
@@ -206,15 +202,15 @@ public class OwnerServiceImpl implements OwnerService{
     }
 
     @Override
-    public ResponseEntity<MessageResponse> deleteOwnerById(Long ownerId) {
+    public ResponseEntity<MessageResponse> deleteOwnerById(Long ownerId,String token) {
         Optional<OwnerEntity> userEntity = ownerRepo.findByOwnerId(ownerId);
         if(userEntity.isEmpty()){
             throw new AuthenticationException("User not found");
         }
-        String response=authClient.deleteUserByAuthId(userEntity.get().getAuthId());
-        if(response.equals("User Deleted Successfully.")){
+        MessageResponse response=client.deleteUserByAuthId(token,userEntity.get().getAuthId()).getBody();
+        if(response.getMessage().equals("User Deleted Successfully.")){
             ownerRepo.deleteById(ownerId);
-            return ResponseEntity.ok(new MessageResponse(response));
+            return ResponseEntity.ok(new MessageResponse(response.getMessage()));
         }
         else {
             return ResponseEntity.ok(new MessageResponse("Error ocuures while deleting the user"));

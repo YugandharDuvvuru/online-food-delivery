@@ -14,6 +14,6 @@ public interface UserService {
     public ResponseEntity<UserDetailsDto> getUserDetailsById(Long id);
     public ResponseEntity<MessageResponse> addUserAddress(Long userId, UserAddressDto userAddress);
     public ResponseEntity<List<UserAddressResponseDto>> getUserAddress(Long userId);
-    public ResponseEntity<UserDetailsDto> updateUserById(Long userId,UserDetailsDto userDetails);
-    public ResponseEntity<MessageResponse> deleteUserById(Long userId);
+    public ResponseEntity<UserDetailsDto> updateUserById(Long userId,UserDetailsDto userDetails,String token);
+    public ResponseEntity<MessageResponse> deleteUserById(Long userId,String token);
 }

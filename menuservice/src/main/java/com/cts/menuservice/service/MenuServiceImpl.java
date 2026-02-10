@@ -170,7 +170,7 @@ public class MenuServiceImpl implements  MenuService{
     }
 
     @Override
-    public ResponseEntity<List<MenuAndRestaurantDto>> searchItemByName(String name) {
+    public ResponseEntity<List<MenuAndRestaurantDto>> searchItemByName(String name,String token) {
         String normalizedKey = MenuItemNameNormalizer.normalize(name);
         List<MenuEntity> itemFoundByName=menuRepo.searchByItemNameKeyContainsNative(name);
         if (itemFoundByName == null || itemFoundByName.isEmpty()) {
@@ -186,7 +186,7 @@ public class MenuServiceImpl implements  MenuService{
             dto.setAvailaible(item.isAvailaible());
             dto.setEstimatedItemsDelivered(item.getEstimatedItemsDelivered());
             dto.setCategory(item.getCategory());
-            RestaurantResponseDto restaurantDto=restaurantClient.getRestaurantById(item.getRestaurantId()).getBody();
+            RestaurantResponseDto restaurantDto=restaurantClient.getRestaurantById(token,item.getRestaurantId()).getBody();
             dto.setName(restaurantDto.getName());
             dto.setArea(restaurantDto.getArea());
             dto.setCity(restaurantDto.getCity());
@@ -198,7 +198,7 @@ public class MenuServiceImpl implements  MenuService{
     }
 
     @Override
-    public ResponseEntity<List<MenuAndRestaurantDto>> fitlterByCategoryAndPrice(FilterDto filterDto) {
+    public ResponseEntity<List<MenuAndRestaurantDto>> fitlterByCategoryAndPrice(FilterDto filterDto,String token) {
         List<MenuEntity> items;
         if (filterDto.getCategory() != null && filterDto.getPrice() != null) {
             items = menuRepo.findByCategoryAndPriceLessThanEqualNative(filterDto.getCategory(), filterDto.getPrice());
@@ -218,7 +218,7 @@ public class MenuServiceImpl implements  MenuService{
             dto.setAvailaible(item.isAvailaible());
             dto.setCategory(item.getCategory());
             dto.setEstimatedItemsDelivered(item.getEstimatedItemsDelivered());
-            RestaurantResponseDto restaurantDto = restaurantClient.getRestaurantById(item.getRestaurantId()).getBody();
+            RestaurantResponseDto restaurantDto = restaurantClient.getRestaurantById(token,item.getRestaurantId()).getBody();
             dto.setName(restaurantDto.getName());
             dto.setArea(restaurantDto.getArea());
             dto.setCity(restaurantDto.getCity());

@@ -18,8 +18,8 @@ public interface OwnerService {
     public ResponseEntity<MessageResponse> toggleOpenStatus(boolean status,Long restaurantId);
     public ResponseEntity<List<RestaurantResponseDto>> searchRestaurantByName(String name);
     public ResponseEntity<RestaurantResponseDto> updateRestaurantById(Long restaurantId,RestaurantDetailsDto restaurantDetails);
-    public ResponseEntity<MessageResponse> deleteRestaurantById(Long restaurantId);
-    public ResponseEntity<OwnerDetailsDto> updateOwnerById(Long ownerId,OwnerDetailsDto ownerDetails);
-    public ResponseEntity<MessageResponse> deleteOwnerById(Long ownerId);
+    public ResponseEntity<MessageResponse> deleteRestaurantById(Long restaurantId,String token);
+    public ResponseEntity<OwnerDetailsDto> updateOwnerById(Long ownerId,OwnerDetailsDto ownerDetails,String token);
+    public ResponseEntity<MessageResponse> deleteOwnerById(Long ownerId,String token);
     public ResponseEntity<List<RestaurantResponseDto>> getAllRestaurantsForUser();
 }

@@ -107,15 +107,15 @@ public class UserServiceImpl implements  UserService{
     }
 
     @Override
-    public ResponseEntity<UserDetailsDto> updateUserById(Long userId, UserDetailsDto userDetails) {
+    public ResponseEntity<UserDetailsDto> updateUserById(Long userId, UserDetailsDto userDetails,String token) {
         UserEntity user = userRepo.findByUserId(userId)
                 .orElseThrow(() -> new AuthenticationException("User not found"));
         boolean emailChanged = userDetails.getEmail() != null
                 && !userDetails.getEmail().equals(user.getEmail());
         if (emailChanged) {
             System.out.println("email changed");
-            String authResp = authClient.updateEmail(user.getAuthId(), userDetails.getEmail());
-            String message = (authResp != null ? authResp : null);
+            MessageResponse authResp = authClient.updateEmail(token,user.getAuthId(), userDetails.getEmail()).getBody();
+            String message = (authResp != null ? authResp.getMessage() : null);
             if ("Email already registered".equals(message)) {
                 throw new DuplicateEmailException("Email already registered try with another Mail.");
             }
@@ -138,13 +138,13 @@ public class UserServiceImpl implements  UserService{
 
     @Override
     @Transactional
-    public ResponseEntity<MessageResponse> deleteUserById(Long userId) {
+    public ResponseEntity<MessageResponse> deleteUserById(Long userId,String token) {
         Optional<UserEntity> userEntity = userRepo.findByUserId(userId);
         if(userEntity.isEmpty()){
             throw new AuthenticationException("User not found");
         }
-        String response=authClient.deleteUserByAuthId(userEntity.get().getAuthId());
-        if(response.equals("User Deleted Successfully.")){
+        MessageResponse response=authClient.deleteUserByAuthId(token,userEntity.get().getAuthId()).getBody();
+        if(response.getMessage().equals("User Deleted Successfully.")){
             userRepo.deleteById(userId);
             return ResponseEntity.ok(new MessageResponse("User Deleted Successfully"));
         }

@@ -1,12 +1,12 @@
 package com.cts.authservice.service;
 
-import com.cts.authservice.client.OwnerServiceClient;
-import com.cts.authservice.client.UserServiceClient;
+import com.cts.authservice.client.UserAndOwnerClient;
 import com.cts.authservice.dto.*;
 import com.cts.authservice.entity.UserAuthDetails;
 import com.cts.authservice.exceptions.AuthenticationException;
 import com.cts.authservice.repository.AuthRepository;
 import com.cts.authservice.util.JwtUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +17,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class AuthServiceImpl implements  AuthService{
     @Autowired
-    private UserServiceClient userClient;
-    @Autowired
-    private OwnerServiceClient ownerClient;
+    private UserAndOwnerClient client;
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
@@ -33,6 +29,7 @@ public class AuthServiceImpl implements  AuthService{
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Transactional
     @Override
     public ResponseEntity<MessageResponse> registerUser(String role, UserDetailsDto userDetailsDto) {
         UserAuthDetails existingUser = authRepo.findByUserEmail(userDetailsDto.getUserEmail());
@@ -51,7 +48,7 @@ public class AuthServiceImpl implements  AuthService{
             userData.setMobileNumber(userDetailsDto.getMobileNumber());
             userData.setFirstName(userDetailsDto.getFirstName());
             userData.setLastName(userDetailsDto.getLastName());
-            userClient.saveUserDetails(userData);
+            client.saveUserDetails(userData);
         }
         else{
             UserRegisterResponseDto userData=new UserRegisterResponseDto();
@@ -60,7 +57,7 @@ public class AuthServiceImpl implements  AuthService{
             userData.setMobileNumber(userDetailsDto.getMobileNumber());
             userData.setFirstName(userDetailsDto.getFirstName());
             userData.setLastName(userDetailsDto.getLastName());
-            ownerClient.saveOwnerDetails(userData);
+            client.saveOwnerDetails(userData);
 
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Registration successful"));

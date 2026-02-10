@@ -1,7 +1,6 @@
 package com.cts.cartservice.service;
 
-import com.cts.cartservice.client.MenuClient;
-import com.cts.cartservice.client.RestaurantClient;
+import com.cts.cartservice.client.MenuAndRestaurantClient;
 import com.cts.cartservice.dto.CartItemDto;
 import com.cts.cartservice.dto.MenuResponseDto;
 import com.cts.cartservice.dto.MessageResponse;
@@ -19,16 +18,15 @@ import java.util.*;
 
 @Service
 public class CartServiceImpl implements CartService{
-	@Autowired
-	private RestaurantClient restaurantClient;
+
     @Autowired
-    private MenuClient client;
+    private MenuAndRestaurantClient client;
     @Autowired
     private CartRepository cartRepo;
     @Transactional
     @Override
-    public ResponseEntity<MessageResponse> addItemToCart(CartItemDto cartItemDto) {
-        MenuResponseDto menuDeatils=client.getParticularItemDetails(cartItemDto.getItemId()).getBody();
+    public ResponseEntity<MessageResponse> addItemToCart(CartItemDto cartItemDto,String token) {
+        MenuResponseDto menuDeatils=client.getParticularItemDetails(token,cartItemDto.getItemId()).getBody();
         if(!menuDeatils.isAvailaible()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Item is unavailable today."));
         }
@@ -81,12 +79,12 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public ResponseEntity<MessageResponse> updateCartitem(CartItemDto cartItemDto) {
+    public ResponseEntity<MessageResponse> updateCartitem(CartItemDto cartItemDto,String token) {
         Optional<CartItem> existingItem = cartRepo.findByUserIdAndItemId(cartItemDto.getUserId(), cartItemDto.getItemId());
         if(existingItem.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Item with "+cartItemDto.getItemId()+"for user with Id "+cartItemDto.getUserId()+"not found."));
         }
-        MenuResponseDto menuDeatils=client.getParticularItemDetails(cartItemDto.getItemId()).getBody();
+        MenuResponseDto menuDeatils=client.getParticularItemDetails(token,cartItemDto.getItemId()).getBody();
         if(!menuDeatils.isAvailaible()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Item is unavailable today."));
         }
@@ -113,16 +111,16 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public ResponseEntity<List<MenuResponseDto>> getAllCartItemsForUser(Long userId) {
+    public ResponseEntity<List<MenuResponseDto>> getAllCartItemsForUser(Long userId,String token) {
         List<CartItem> cartItems=cartRepo.findByUserId(userId);
 //        if(cartItems.isEmpty()){
 //            throw  new UserCartNotFoundException("No cart Items found for the user with userId:"+userId);
 //        }
         List<MenuResponseDto> dto=new ArrayList<>();
         for(CartItem item:cartItems){
-            MenuResponseDto menuDeatils=client.getParticularItemDetails(item.getItemId()).getBody();
+            MenuResponseDto menuDeatils=client.getParticularItemDetails(token,item.getItemId()).getBody();
             menuDeatils.setQuantity(item.getQuantity());
-            RestaurantResponseDto restaurantDto=restaurantClient.getRestaurantById(menuDeatils.getRestaurantId()).getBody();
+            RestaurantResponseDto restaurantDto=client.getRestaurantById(token,menuDeatils.getRestaurantId()).getBody();
             menuDeatils.setRestaurantName(restaurantDto.getName());
             dto.add(menuDeatils);
         }
